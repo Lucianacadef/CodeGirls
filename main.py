@@ -1,3 +1,20 @@
+# Para criar texto
+
+#def mensagem_tela (msg, cor, y_displace=0, size = 'small'):
+	#smallfont = fpygame.font.SysFont('comicsamsms', 25)
+	#medfont = fpygame.font.SysFont('comicsamsms', 50)
+	#largefont = fpygame.font.SysFont('comicsamsms', 80)
+	#texto_tela = font.render(msg, True, cor)
+	#gameDisplay.blit(texto_tela, [display_widht/2, display_height/2])
+
+	
+	#caso o jogador perca
+
+	#mensagem_tela('Loser :/', color='red')
+	#pygame.display.update()
+	#time.sleep(2)
+
+
 import pygame , sys
 from pygame.locals import *
 class monstros:
