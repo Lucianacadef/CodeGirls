@@ -10,6 +10,12 @@ class monstros:
 	def desenha(self,x,y):
 		self.tela.blit(self.imagem,(self.centro + x,self.topo+y))
 
+def interseccao(s1_x,s1_y,s2_x,s2_y):
+	if (s1_x > s2_x - 32) and (s1_y > s2_y - 32) and (s1_x < s2_x - 32) and (s1_y < s2_y - 32):
+		return 1
+	else:
+		return 0
+
 
 
 clock = pygame.time.Clock()
@@ -40,7 +46,7 @@ for i in range(400,560,40):
 	monstrosdados.append(mondic)
 
 print(monstrosdados)	
-
+atirar_x = 0
 while True:
 	monstros = monstrosdados
 	clock.tick(60)
@@ -59,19 +65,19 @@ while True:
 		elif evento.type == MOUSEBUTTONDOWN:
 			atirar_y = nave_topo
 			atirar_x = x
-			for i in range(len(monstrosdados)):
-				for j in monstrosdados[i]:
-					if atirar_y <= monstrosdados[i][j][1] -10 and atirar_y >= monstrosdados[i][j][1] + 10 and atirar_x <= monstrosdados[i][j][0]-10 and atirar_x >= monstrosdados[i][j][0]+10:
-						monstrosdados[i][j] = {}
+			
+					
 
 	if atirar_y > 0:
 		tela.blit(tiro, (atirar_x,atirar_y))
-		atirar_y -= 10
+		atirar_y -= 15
+
+	for i in range(len(monstrosdados)):
+		for j in monstrosdados[i]:
+			intersec =interseccao(monstrosdados[i][j][0],monstrosdados[i][j][1],atirar_x,atirar_y)
+			if intersec == 1:
+				del monstrosdados[i][j]
 
 	
-
-
-
-
 
 	pygame.display.update()
