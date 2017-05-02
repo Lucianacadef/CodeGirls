@@ -37,10 +37,9 @@ for i in range(400,560,40):
 		mon = monstro.desenha(j,-i)
 		mondic[num] = [j,-i]
 		num = num+1
-	monstrosdados.append([mondic])
+	monstrosdados.append(mondic)
 
 print(monstrosdados)	
-print(monstros)
 
 while True:
 	monstros = monstrosdados
@@ -54,24 +53,22 @@ while True:
 		for j in range(-300,300,40):
 			mon = monstro.desenha(j,-i)
 
-
-
-
 	for evento in pygame.event.get():
 		if evento.type == pygame.QUIT:
 			sys.exit()
 		elif evento.type == MOUSEBUTTONDOWN:
 			atirar_y = nave_topo
 			atirar_x = x
+			for i in range(len(monstrosdados)):
+				for j in monstrosdados[i]:
+					if atirar_y <= monstrosdados[i][j][1] -10 and atirar_y >= monstrosdados[i][j][1] + 10 and atirar_x <= monstrosdados[i][j][0]-10 and atirar_x >= monstrosdados[i][j][0]+10:
+						monstrosdados[i][j] = {}
 
 	if atirar_y > 0:
 		tela.blit(tiro, (atirar_x,atirar_y))
 		atirar_y -= 10
 
-	for i in range(len(monstrosdados)):
-		for j in range(len(monstrosdados[i])):
-			if atirar_y == monstrosdados[i][j][1] and atirar_x == monstrosdados[i][j][0]:
-				del monstrosdados[i][j]
+	
 
 
 
