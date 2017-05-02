@@ -1,5 +1,30 @@
 import pygame , sys
 from pygame.locals import *
+class monstros:
+	def __init__(self,tela,imagem):
+		self.imagem = pygame.image.load(imagem)
+		self.tela = tela
+		self.topo = tela.get_height() - self.imagem.get_height()
+		self.centro = tela.get_width()/2 - self.imagem.get_width()/2
+
+	def desenha(self):
+		self.tela.blit(self.imagem,(self.centro,self.topo))
+'''
+class naves:
+	def __init__(self,tela,imagem):
+		self.imagem = pygame.image.load(imagem)
+		self.tela = tela
+		self.topo = tela.get_height() - self.imagem.get_height()
+		self.centro = tela.get_width()/2 - self.imagem.get_width()/2
+
+	def desenha(self):
+		self.tela.blit(self.imagem,(self.centro,self.topo))
+
+	def atirar(self,tela,imagem,x,y):
+		self.topo = tela.get_height() - self.imagem.get_height()
+		self.centro = tela.get_width()/2 - self.imagem.get_width()/2
+'''
+
 
 clock = pygame.time.Clock()
 tela = pygame.display.set_mode((800,600))
@@ -11,6 +36,7 @@ nave_esq = tela.get_width()/2 - nave.get_width()/2
 pygame.display.set_caption("Space invaders - Code Girls")
 
 tela.blit(nave, (nave_esq,nave_topo))
+monstro = monstros(tela,"monstrinho.png")
 
 background = pygame.image.load("espaco.jpg")
 
@@ -24,6 +50,7 @@ while True:
 	#tela.fill((0,0,0))
 	x,y = pygame.mouse.get_pos()
 	tela.blit(nave, (x-nave.get_width()/2,nave_topo))
+	monstro.desenha()
 	
 
 	for evento in pygame.event.get():
