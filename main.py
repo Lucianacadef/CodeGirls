@@ -10,6 +10,8 @@ class monstros:
 	def desenha(self,x,y):
 		self.tela.blit(self.imagem,(self.centro + x,self.topo+y))
 
+
+
 clock = pygame.time.Clock()
 tela = pygame.display.set_mode((800,600))
 pygame.mouse.set_visible(0)
@@ -26,26 +28,34 @@ background = pygame.image.load("espaco.jpg")
 
 tiro = pygame.image.load("shot.png")
 atirar_y = 0
+monstrosdados = []
+monstros = []
+for i in range(400,560,40):
+	mondic = {}
+	num = 0
+	for j in range(-300,300,40):
+		mon = monstro.desenha(j,-i)
+		mondic[num] = [j,-i]
+		num = num+1
+	monstrosdados.append([mondic])
 
+print(monstrosdados)	
+print(monstros)
 
 while True:
+	monstros = monstrosdados
 	clock.tick(60)
 	tela.blit(background, (0, 0))
 	#tela.fill((0,0,0))
 	x,y = pygame.mouse.get_pos()
 	tela.blit(nave, (x-nave.get_width()/2,nave_topo))
 	#monstro.desenha(0,-500)
-	monstros = []
 	for i in range(400,560,40):
 		for j in range(-300,300,40):
 			mon = monstro.desenha(j,-i)
-			monstros.append([mon])
 
-		#mon = mon1+mon2+mon3+mon4+mon5
 
-		
 
-	
 
 	for evento in pygame.event.get():
 		if evento.type == pygame.QUIT:
@@ -57,5 +67,14 @@ while True:
 	if atirar_y > 0:
 		tela.blit(tiro, (atirar_x,atirar_y))
 		atirar_y -= 10
+
+	for i in range(len(monstrosdados)):
+		for j in range(len(monstrosdados[i])):
+			if atirar_y == monstrosdados[i][j][1] and atirar_x == monstrosdados[i][j][0]:
+				del monstrosdados[i][j]
+
+
+
+
 
 	pygame.display.update()
