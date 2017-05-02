@@ -7,8 +7,8 @@ class monstros:
 		self.topo = tela.get_height() - self.imagem.get_height()
 		self.centro = tela.get_width()/2 - self.imagem.get_width()/2
 
-	def desenha(self):
-		self.tela.blit(self.imagem,(self.centro,self.topo))
+	def desenha(self,x,y):
+		self.tela.blit(self.imagem,(self.centro + x,self.topo+y))
 
 clock = pygame.time.Clock()
 tela = pygame.display.set_mode((800,600))
@@ -34,7 +34,17 @@ while True:
 	#tela.fill((0,0,0))
 	x,y = pygame.mouse.get_pos()
 	tela.blit(nave, (x-nave.get_width()/2,nave_topo))
-	monstro.desenha()
+	#monstro.desenha(0,-500)
+	monstros = []
+	for i in range(400,560,40):
+		for j in range(-300,300,40):
+			mon = monstro.desenha(j,-i)
+			monstros.append([mon])
+
+		#mon = mon1+mon2+mon3+mon4+mon5
+
+		
+
 	
 
 	for evento in pygame.event.get():
