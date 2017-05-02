@@ -9,22 +9,6 @@ class monstros:
 
 	def desenha(self):
 		self.tela.blit(self.imagem,(self.centro,self.topo))
-'''
-class naves:
-	def __init__(self,tela,imagem):
-		self.imagem = pygame.image.load(imagem)
-		self.tela = tela
-		self.topo = tela.get_height() - self.imagem.get_height()
-		self.centro = tela.get_width()/2 - self.imagem.get_width()/2
-
-	def desenha(self):
-		self.tela.blit(self.imagem,(self.centro,self.topo))
-
-	def atirar(self,tela,imagem,x,y):
-		self.topo = tela.get_height() - self.imagem.get_height()
-		self.centro = tela.get_width()/2 - self.imagem.get_width()/2
-'''
-
 
 clock = pygame.time.Clock()
 tela = pygame.display.set_mode((800,600))
