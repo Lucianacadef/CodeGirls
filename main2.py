@@ -1,27 +1,34 @@
 import pygame , sys
 from pygame.locals import *
 
-def interseccao(s1_x, s1_y, s2_x, s2_y):
-	return (s1_x > s2_x - 10) and \
-	       (s1_y > s2_y - 10) and \
-	       (s1_x < s2_x + 10) and \
-	       (s1_y < s2_y + 10)
+pygame.init()
+pygame.mixer.init()
+
+# def interseccao(s1_x, s1_y, s2_x, s2_y):
+# 	return (s1_x > s2_x - 10) and \
+# 	       (s1_y > s2_y - 10) and \
+# 	       (s1_x < s2_x + 10) and \
+# 	       (s1_y < s2_y + 10)
 
 class monstros(pygame.sprite.Sprite):
-	def __init__(self,tela,imagem, x, y):
+	def __init__(self,tela,imagem):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.image.load(imagem)
 		self.tela = tela
+		self.passo = 0
+		self.direcao = 1
+		self.type = 1
+
+	def posicao(self,x,y):
 		self.rect = self.image.get_rect()
 		self.rect.x = x
 		self.rect.y = y
-		self.passo = 0
-		self.direcao = 1
 
 	def desenha(self):
 		self.tela.blit(self.image,(self.rect.x,
 			                        self.rect.y))
+
 
 	def update(self):
 		if self.passo == 10:
@@ -30,13 +37,7 @@ class monstros(pygame.sprite.Sprite):
 			self.direcao = 1
 		self.passo += self.direcao
 		self.rect.x += self.direcao
-		# self.rect.x += 5
-		# pygame.tima.delay(1000)
-		# self.rect.x -=5
-		# pygame.tima.delay(1000)
-		# self.rect.x -=5
-		# pygame.tima.delay(1000)
-		# self.rect.x += 5
+
 
 
 class shots(pygame.sprite.Sprite):
@@ -55,7 +56,11 @@ class shots(pygame.sprite.Sprite):
 		self.tela.blit(self.image,(self.rect.x,
 			                        self.rect.y))
 	def update(self):
-		self.rect.y += 10
+		self.rect.y -= 10
+		if self.rect.y < 0:
+			self.kill()
+
+
 
 
 clock = pygame.time.Clock()
@@ -68,6 +73,9 @@ nave_topo = tela.get_height() - nave.get_height()
 nave_esq = tela.get_width()/2 - nave.get_width()/2
 pygame.display.set_caption("Space invaders - Code Girls")
 
+print(nave_topo)
+print(nave_esq)
+
 tela.blit(nave, (nave_esq,nave_topo))
 
 background = pygame.image.load("espaco.jpg")
@@ -78,36 +86,37 @@ background = pygame.image.load("espaco.jpg")
 # 		novo_monstro = monstros(tela,"monstrinho.png", j, -i)
 # 		lista_monstros.append(novo_monstro)
 
-for i in range(400,560,40):
-	for j in range(-300,300,40):
-		novo_monstro = monstros(tela,"monstrinho.png", j, -i)
-		grupo_monstro = pygame.sprite.Group()
+grupo_monstro = pygame.sprite.Group()
+for i in range(70,200,40):
+	for j in range(50,750,40):
+		#novo_monstro = monstros(tela,"monstrinho.png", j, -i)
+		#novo_monstro.desenha()
+		novo_monstro = monstros(tela,"monstrinho.png")
+		novo_monstro.posicao(j, i)
 		grupo_monstro.add(novo_monstro)
 
-tiro = shots(tela,"shot.png")
-atirar_y = 0
-atirar_x = 0
+# tiro = shots(tela, "shot.png")
+# tiro2 = shots(tela, "shot.png")
+# tiro3 = shots(tela, "shot.png")
+# tiro4 = shots(tela, "shot.png")
+# tiro5 = shots(tela, "shot.png")
+#atirar_y = 0
+#atirar_x = 0
 #tiros = []
 grupo_tiros = pygame.sprite.Group()
+monstrinho = pygame.image.load('monstrinho.png')
+tiro = 0
+
+print(nave.get_width())
 
 while True:
-
-	clock.tick(60)
-	tela.blit(background, (0, 0))
-
-	x,y = pygame.mouse.get_pos()
-	tela.blit(nave, (x-nave.get_width()/2,nave_topo))
-
-	grupo_monstro.update()
-
-	grupo_monstro.draw(tela)
-
 	for evento in pygame.event.get():
 		if evento.type == pygame.QUIT:
 			sys.exit()
 		elif evento.type == MOUSEBUTTONDOWN:
 			# tiros.append([event.pos[0],500])
 			# for t in tiros:
+			tiro = shots(tela, "shot.png")
 			tiro.posicao(x,nave_topo)
 			grupo_tiros.add(tiro)
 			grupo_tiros.draw(tela)
@@ -122,6 +131,16 @@ while True:
 
 			#atirar_y = nave_topo
 			#atirar_x = x
+
+	tela.blit(background, (0, 0))
+
+	x,y = pygame.mouse.get_pos()
+	tela.blit(nave, (x-nave.get_width()/2,nave_topo))
+	#tela.fill([0,0,0])
+
+	grupo_monstro.draw(tela)
+	grupo_tiros.draw(tela)
+
 					
 
 	#if atirar_y > 0:
@@ -129,9 +148,11 @@ while True:
 		#atirar_y -= 15
 
 #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-	# monstros_atingidos = pygame.sprite.spritecollide(grupo_tiros,grupo_monstro,True)
+	if tiro in grupo_tiros:
+
+		pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
 	# for monstro in monstros_atingidos:
-	# 	grupo_monstro.kill(monstro)
+	# 	grupo_monstro.kill(novo_monstro)
 
 
 	# lista_sobreviventes = []
@@ -146,6 +167,9 @@ while True:
 
 	# lista_monstros = monstros_restantes
 
-	
-
+	grupo_tiros.update()
+	grupo_monstro.update()
 	pygame.display.update()
+
+	pygame.display.flip()
+	clock.tick(60)
