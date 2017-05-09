@@ -3,6 +3,7 @@ from pygame.locals import *
 
 pygame.init()
 pygame.mixer.init()
+pygame.font.init()
 
 # def interseccao(s1_x, s1_y, s2_x, s2_y):
 # 	return (s1_x > s2_x - 10) and \
@@ -98,6 +99,8 @@ pygame.display.set_caption("Space invaders - Code Girls")
 
 background = pygame.image.load("espaco.jpg")
 
+myfont = pygame.font.SysFont('Arial', 30)
+fim = myfont.render('Você venceu!!!!!!!!!!!!!!!!', False, (255,255,255))
 
 # lista_monstros = []
 # for i in range(400,560,40):
@@ -106,8 +109,8 @@ background = pygame.image.load("espaco.jpg")
 # 		lista_monstros.append(novo_monstro)
 
 grupo_monstro = pygame.sprite.Group()
-for i in range(70,200,40):
-	for j in range(50,750,40):
+for i in range(170,210,40):
+	for j in range(300,400,40):
 		#novo_monstro = monstros(tela,"monstrinho.png", j, -i)
 		#novo_monstro.desenha()
 		novo_monstro = monstros(tela,"monstrinho.png")
@@ -125,6 +128,7 @@ for i in range(70,200,40):
 grupo_tiros = pygame.sprite.Group()
 monstrinho = pygame.image.load('monstrinho.png')
 tiro = 0
+numero = 0
 
 while True:
 	for evento in pygame.event.get():
@@ -167,9 +171,11 @@ while True:
 		#atirar_y -= 15
 
 #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-	if tiro in grupo_tiros:
 
-		pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
+	col = pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
+
+
+
 	# for monstro in monstros_atingidos:
 	# 	grupo_monstro.kill(novo_monstro)
 
@@ -185,6 +191,10 @@ while True:
 	# 	monstros_restantes.append(lista_monstros[k])
 
 	# lista_monstros = monstros_restantes
+	if len(grupo_monstro) == 0:
+		tela.blit(fim,(400,300))
+
+
 
 	grupo_tiros.update()
 	grupo_monstro.update()
