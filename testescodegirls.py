@@ -65,6 +65,7 @@ class shots(pygame.sprite.Sprite):
 
 		self.image = pygame.image.load(imagem)
 		self.tela = tela
+
 		
 	def posicao(self,x,y):
 		self.rect = self.image.get_rect()
@@ -82,6 +83,8 @@ class shots(pygame.sprite.Sprite):
 
 
 
+
+
 clock = pygame.time.Clock()
 tela = pygame.display.set_mode((800,600))
 pygame.mouse.set_visible(0)
@@ -94,9 +97,16 @@ nave_topo = 487
 nave_esq = 350
 pygame.display.set_caption("Space invaders - Code Girls")
 
+# carregando os sound effects
 
+shoot_sound = pygame.mixer.Sound("laser_shoot.wav")
 
+#shoot_sound.play() só colocar no loop princ
 background = pygame.image.load("espaco.jpg")
+
+
+#FALTA A OUTRAS MUSICAS, ESTA DANDO PAU  
+
 
 
 # lista_monstros = []
@@ -136,6 +146,7 @@ while True:
 			tiro = shots(tela, "shot.png")
 			tiro.posicao(x,nave_topo)
 			grupo_tiros.add(tiro)
+			shoot_sound.play()
 			grupo_tiros.draw(tela)
 
 			# for b in range(len(tiros)):
