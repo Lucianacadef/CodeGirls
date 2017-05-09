@@ -3,6 +3,7 @@ from pygame.locals import *
 
 pygame.init()
 pygame.mixer.init()
+pygame.font.init()
 
 # def interseccao(s1_x, s1_y, s2_x, s2_y):
 # 	return (s1_x > s2_x - 10) and \
@@ -90,7 +91,7 @@ tela = pygame.display.set_mode((800,600))
 pygame.mouse.set_visible(0)
 
 #nave = pygame.image.load("nave_pequena.png")
-nave = jogador(tela,"nova_nave.png")
+nave = jogador(tela,"nave_pequena.png")
 #nave_topo = tela.get_height() - nave.get_height()
 #nave_esq = tela.get_width()/2 - nave.get_width()/2
 nave_topo = 487
@@ -104,6 +105,9 @@ shoot_sound = pygame.mixer.Sound("laser_shoot.wav")
 #shoot_sound.play() só colocar no loop princ
 background = pygame.image.load("espaco.jpg")
 
+myfont = pygame.font.SysFont('Arial', 30)
+myfont1 = pygame.font.SysFont('Arial', 100)
+fim = myfont1.render('Você venceu!!!!!!', False, (255,255,255))
 
 #FALTA A OUTRAS MUSICAS, ESTA DANDO PAU  
 
@@ -116,8 +120,8 @@ background = pygame.image.load("espaco.jpg")
 # 		lista_monstros.append(novo_monstro)
 
 grupo_monstro = pygame.sprite.Group()
-for i in range(70,200,40):
-	for j in range(50,750,40):
+for i in range(170,210,40):
+	for j in range(300,400,40):
 		#novo_monstro = monstros(tela,"monstrinho.png", j, -i)
 		#novo_monstro.desenha()
 		novo_monstro = monstros(tela,"monstrinho.png")
@@ -135,6 +139,8 @@ for i in range(70,200,40):
 grupo_tiros = pygame.sprite.Group()
 monstrinho = pygame.image.load('monstrinho.png')
 tiro = 0
+numero = 0
+pontos = 0
 
 while True:
 	for evento in pygame.event.get():
@@ -178,9 +184,17 @@ while True:
 		#atirar_y -= 15
 
 #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-	if tiro in grupo_tiros:
 
-		pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
+	col = pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
+	for i in col:
+		pontos += 1
+	ponto = myfont.render('Pontuação: {0}'.format(pontos), False, (255,255,255))
+	tela.blit(ponto,(10,10))
+	#print(pontos)
+
+
+
+
 	# for monstro in monstros_atingidos:
 	# 	grupo_monstro.kill(novo_monstro)
 
@@ -196,6 +210,11 @@ while True:
 	# 	monstros_restantes.append(lista_monstros[k])
 
 	# lista_monstros = monstros_restantes
+	if len(grupo_monstro) == 0:
+		tela.fill([0,0,0])
+		tela.blit(fim,(100,220))
+
+
 
 	grupo_tiros.update()
 	grupo_monstro.update()
