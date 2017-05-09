@@ -88,7 +88,7 @@ tela = pygame.display.set_mode((800,600))
 pygame.mouse.set_visible(0)
 
 #nave = pygame.image.load("nave_pequena.png")
-nave = jogador(tela,"nova_nave.png")
+nave = jogador(tela,"nave_pequena.png")
 #nave_topo = tela.get_height() - nave.get_height()
 #nave_esq = tela.get_width()/2 - nave.get_width()/2
 nave_topo = 487
@@ -100,7 +100,8 @@ pygame.display.set_caption("Space invaders - Code Girls")
 background = pygame.image.load("espaco.jpg")
 
 myfont = pygame.font.SysFont('Arial', 30)
-fim = myfont.render('Você venceu!!!!!!!!!!!!!!!!', False, (255,255,255))
+myfont1 = pygame.font.SysFont('Arial', 100)
+fim = myfont1.render('Você venceu!!!!!!', False, (255,255,255))
 
 # lista_monstros = []
 # for i in range(400,560,40):
@@ -129,6 +130,7 @@ grupo_tiros = pygame.sprite.Group()
 monstrinho = pygame.image.load('monstrinho.png')
 tiro = 0
 numero = 0
+pontos = 0
 
 while True:
 	for evento in pygame.event.get():
@@ -173,6 +175,12 @@ while True:
 #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 	col = pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
+	for i in col:
+		pontos += 1
+	ponto = myfont.render('Pontuação: {0}'.format(pontos), False, (255,255,255))
+	tela.blit(ponto,(10,10))
+	#print(pontos)
+
 
 
 
@@ -192,7 +200,8 @@ while True:
 
 	# lista_monstros = monstros_restantes
 	if len(grupo_monstro) == 0:
-		tela.blit(fim,(400,300))
+		tela.fill([0,0,0])
+		tela.blit(fim,(100,220))
 
 
 
