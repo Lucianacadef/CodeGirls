@@ -88,7 +88,7 @@ tela = pygame.display.set_mode((800,600))
 pygame.mouse.set_visible(0)
 
 #nave = pygame.image.load("nave_pequena.png")
-nave = jogador(tela,"nave_pequena.png")
+nave = jogador(tela,"nova_nave.png")
 #nave_topo = tela.get_height() - nave.get_height()
 #nave_esq = tela.get_width()/2 - nave.get_width()/2
 nave_topo = 487
