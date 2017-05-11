@@ -103,11 +103,12 @@ class navemae(pygame.sprite.Sprite):
 
 ########################################################
 class shots(pygame.sprite.Sprite):
-	def __init__(self,tela,imagem):
+	def __init__(self,tela,imagem,m):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.image.load(imagem)
 		self.tela = tela
+		self.m = m
 
 		
 	def posicao(self,x,y):
@@ -119,9 +120,14 @@ class shots(pygame.sprite.Sprite):
 		self.tela.blit(self.image,(self.rect.x,
 			                        self.rect.y))
 	def update(self):
-		self.rect.y -= 10
-		if self.rect.y < 0:
-			self.kill()
+		if self.m == 1:
+			self.rect.y -= 10
+			if self.rect.y < 0:
+				self.kill()
+		if self.m == 2:
+			self.rect.y += 10
+			if self.rect.y > 600:
+				self.kill()
 
 
 
@@ -135,11 +141,12 @@ nave = jogador(tela,"nova_nave.png")
 background = pygame.image.load("espaco.jpg")
 monstrinho = pygame.image.load('monstrinho.png')
 mae = navemae(tela,"nave_mae.png")
-tiro = shots(tela, "shot.png")
 nave_mae = navemae(tela,"nave_mae.png")
 nave_mae.posicao(0,0)
 grupo_nave_mae = pygame.sprite.Group()
 grupo_nave_mae.add(nave_mae)
+tirom = shots(tela,"shot.png",2)
+grupo_tirosm = pygame.sprite.Group()
 
 #nave_topo = tela.get_height() - nave.get_height()
 #nave_esq = tela.get_width()/2 - nave.get_width()/2
@@ -174,17 +181,14 @@ for i in range(100,300,40):
 
 
 
-#nave mae meio cagada
-
 
 
 #ARRUMAR A POSICAO DO GIF E O TEMPO DE TICK (clock.tick(4))
 #COLOCAR ELES NO LUGAR DOS MONSTROS ATUAIS 
-m1 = pygame.image.load("m1.png")
-m2 = pygame.image.load("m3.png")
-monstrosCurrentImage = 1
+
 contagem = 0
 acertosnavemae = 0
+c_tirom = 0
 
 ####################################################################################
 
@@ -195,13 +199,20 @@ while True:
 		elif evento.type == MOUSEBUTTONDOWN:
 			# tiros.append([event.pos[0],500])
 			# for t in tiros:
-			tiro = shots(tela, "shot.png")
+			tiro = shots(tela, "shot.png",1)
 			tiro.posicao(x,nave_topo)
 			grupo_tiros.add(tiro)
 			shoot_sound.play()
 			grupo_tiros.draw(tela)
 
-	
+	c_tirom += 1
+	if c_tirom >= 10:
+		tirom = shots(tela,"shot.png",2)
+		tirom.posicao(x,300)
+		grupo_tirosm.add(tirom)
+		grupo_tirosm.draw(tela)
+		c_tirom = 0
+
 
 #---------------------------------#
 	tela.blit(background, (0, 0))
@@ -234,6 +245,7 @@ while True:
 		acertosnavemae = 0
 
 	if len(grupo_monstro) == 0 and len(grupo_nave_mae) == 0:
+
 		tela.fill([0,0,0])
 		tela.blit(fim,(100,220))
 
@@ -241,6 +253,7 @@ while True:
 	grupo_monstro.update()
 	grupo_nave_mae.update()
 	pygame.display.update()
+	grupo_tirosm.update()
 
 	pygame.display.flip()
 	clock.tick(60)
