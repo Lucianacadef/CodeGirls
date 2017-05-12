@@ -4,6 +4,7 @@
 #COLOCAR NAVE MAE NO JOGO -- CONTINUAR (PRECISO COLOCA_LA NO LOOP PRINC)
 import pygame , sys
 from pygame.locals import *
+import random
 
 pygame.init()
 pygame.mixer.init()
@@ -28,6 +29,10 @@ class jogador(pygame.sprite.Sprite):
 	def desenha(self,nave_topo,nave_esq):
 		self.tela.blit(self.image,(nave_topo,
 			                        nave_esq))
+
+	def update(self,x):
+		self.rect.x = x
+	
 
 class monstrosgif(pygame.sprite.Sprite):
 	def __init__(self,tela,imagem1,imagem2):
@@ -137,7 +142,13 @@ pygame.mouse.set_visible(0)
 pygame.display.set_caption("Space invaders - Code Girls")
 
 #importanto imgs 
-nave = jogador(tela,"nova_nave.png")
+nave1 = jogador(tela,"nova_nave.png")
+
+nave1.posicao(71,67,tela)
+print(nave1.rect)
+grupo_nave = pygame.sprite.Group()
+grupo_nave.add(nave1)
+
 background = pygame.image.load("espaco.jpg")
 monstrinho = pygame.image.load('monstrinho.png')
 mae = navemae(tela,"nave_mae.png")
@@ -148,9 +159,10 @@ grupo_nave_mae.add(nave_mae)
 tirom = shots(tela,"shot.png",2)
 grupo_tirosm = pygame.sprite.Group()
 
+
 #nave_topo = tela.get_height() - nave.get_height()
 #nave_esq = tela.get_width()/2 - nave.get_width()/2
-nave_topo = 487
+nave_topo = 520
 nave_esq = 350
 
 
@@ -182,7 +194,6 @@ for i in range(100,300,40):
 
 
 
-
 #ARRUMAR A POSICAO DO GIF E O TEMPO DE TICK (clock.tick(4))
 #COLOCAR ELES NO LUGAR DOS MONSTROS ATUAIS 
 
@@ -203,35 +214,45 @@ while True:
 			tiro.posicao(x,nave_topo)
 			grupo_tiros.add(tiro)
 			shoot_sound.play()
-			grupo_tiros.draw(tela)
+
+	posicoesmx = []
+	posicoesmy = []
+
+	for i in grupo_monstro:
+		g = i.rect.x
+		f = i.rect.y
+		posicoesmx.append(g)
+		posicoesmy.append(f)
+
 
 	c_tirom += 1
-	if c_tirom >= 10:
-		tirom = shots(tela,"shot.png",2)
-		tirom.posicao(x,300)
-		grupo_tirosm.add(tirom)
-		grupo_tirosm.draw(tela)
-		c_tirom = 0
+	if len(posicoesmx) != 0:
+		if c_tirom >= 100:
+			g = random.randint(0,len(posicoesmx))
+			tirom = shots(tela,"shot_monstro.png",2)
+			tirom.posicao(posicoesmx[g],posicoesmy[g])
+			grupo_tirosm.add(tirom)
+			c_tirom = 0
 
 
 #---------------------------------#
 	tela.blit(background, (0, 0))
 
 	x,y = pygame.mouse.get_pos()
-	nave.posicao(x,y,tela)
-	nave.desenha(x-50,nave_topo)
+	#nave.posicao(x,y,tela)
 	#tela.blit(nave, (x-nave.get_width()/2,nave_topo))
 	#tela.fill([0,0,0])
-	
+	grupo_nave.draw(tela)
 	grupo_nave_mae.draw(tela)
 	grupo_monstro.draw(tela)
 	grupo_tiros.draw(tela)
-
+	grupo_tirosm.draw(tela)
 
 
 
 	col = pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
 	colnavemae = pygame.sprite.groupcollide(grupo_tiros,grupo_nave_mae,True,False)
+	colmatajoga = pygame.sprite.groupcollide(grupo_tirosm,grupo_nave,True,True)
 	for i in col:
 		pontos += 1
 	ponto = myfont.render('Pontuação: {0}'.format(pontos), False, (255,255,255))
@@ -254,6 +275,7 @@ while True:
 	grupo_nave_mae.update()
 	pygame.display.update()
 	grupo_tirosm.update()
+	grupo_nave.update(x)
 
 	pygame.display.flip()
 	clock.tick(60)
