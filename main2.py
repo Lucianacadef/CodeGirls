@@ -1,22 +1,50 @@
+#ARRUMAR A POSICAO DO GIF E O TEMPO DE TICK (clock.tick(4))
+#COLOCAR ELES NO LUGAR DOS MONSTROS ATUAIS 
+#TENTEI ADD MP3 NAO DEU DO MESMO JEITO (mus_inic)
+#COLOCAR NAVE MAE NO JOGO -- CONTINUAR (PRECISO COLOCA_LA NO LOOP PRINC)
 import pygame , sys
 from pygame.locals import *
+import random
 
 pygame.init()
 pygame.mixer.init()
+pygame.font.init()
 
-# def interseccao(s1_x, s1_y, s2_x, s2_y):
-# 	return (s1_x > s2_x - 10) and \
-# 	       (s1_y > s2_y - 10) and \
-# 	       (s1_x < s2_x + 10) and \
-# 	       (s1_y < s2_y + 10)
 
-class monstros(pygame.sprite.Sprite):
+class jogador(pygame.sprite.Sprite):
 	def __init__(self,tela,imagem):
 		pygame.sprite.Sprite.__init__(self)
-
 		self.image = pygame.image.load(imagem)
 		self.tela = tela
-		self.passo = 0
+
+
+	def posicao(self,x,y,tela):
+		self.rect = self.image.get_rect()
+		self.rect.x = x
+		self.rect.y = y
+		self.rect.top = 525
+		self.rect.left = 100
+
+
+
+	def desenha(self,nave_topo,nave_esq):
+		self.tela.blit(self.image,(nave_topo,
+			                        nave_esq))
+
+	def update(self,x):
+		self.rect.x = x
+	
+
+class monstrosgif(pygame.sprite.Sprite):
+	def __init__(self,tela,imagem1,imagem2):
+		pygame.sprite.Sprite.__init__(self)
+
+		self.image = pygame.image.load(imagem1)
+		self.image1 = pygame.image.load(imagem1)
+		self.image2 = pygame.image.load(imagem2)
+		self.tela = tela
+		self.passo1 = 0
+		self.passo2 = 0
 		self.direcao = 1
 		self.type = 1
 
@@ -31,21 +59,63 @@ class monstros(pygame.sprite.Sprite):
 
 
 	def update(self):
-		if self.passo == 10:
+		if self.passo1 < 15:
+			self.image = self.image2
+		elif self.passo1 >= 15:
+			self.image = self.image1
+		if self.passo1 == 30:
+			self.passo1 = 0
+		else:
+			self.passo1 += 1
+
+		if self.passo2 == 10:
 			self.direcao = -1
-		elif self.passo == -10:
+		elif self.passo2 == -10:
 			self.direcao = 1
-		self.passo += self.direcao
+		self.passo2 += self.direcao
 		self.rect.x += self.direcao
 
-
-
-class shots(pygame.sprite.Sprite):
+################### nave mae ############################
+class navemae(pygame.sprite.Sprite):
 	def __init__(self,tela,imagem):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.image.load(imagem)
 		self.tela = tela
+		self.passo = 0
+		self.direcao = 1
+		self.type = 1
+
+	def posicao(self,x,y):
+		self.rect = self.image.get_rect() 
+		self.rect.x = x
+		self.rect.y = y
+
+	def desenha(self):
+		self.tela.blit(self.image,(self.rect.x,
+			                        self.rect.y))
+
+
+	def update(self):
+		if self.passo >= 715:
+			self.direcao = -3
+		elif self.passo <= 0:
+			self.direcao = 3
+	
+		
+		self.passo += self.direcao
+		self.rect.x += self.direcao
+
+
+########################################################
+class shots(pygame.sprite.Sprite):
+	def __init__(self,tela,imagem,m):
+		pygame.sprite.Sprite.__init__(self)
+
+		self.image = pygame.image.load(imagem)
+		self.tela = tela
+		self.m = m
+
 		
 	def posicao(self,x,y):
 		self.rect = self.image.get_rect()
@@ -56,58 +126,99 @@ class shots(pygame.sprite.Sprite):
 		self.tela.blit(self.image,(self.rect.x,
 			                        self.rect.y))
 	def update(self):
-		self.rect.y -= 10
-		if self.rect.y < 0:
-			self.kill()
+		if self.m == 1:
+			self.rect.y -= 10
+			if self.rect.y < 0:
+				self.kill()
+		if self.m == 2:
+			self.rect.y += 10
+			if self.rect.y > 600:
+				self.kill()
+class Vida(pygame.sprite.Sprite):
+	def __init__(self,tela,imagem,x,y):
+		pygame.sprite.Sprite.__init__(self)
 
+		self.image = pygame.image.load(imagem)
+		self.rect = self.image.get_rect()
+		self.rect.x = x
+		self.rect.y = y
+		self.tela = tela
 
 
 
 clock = pygame.time.Clock()
 tela = pygame.display.set_mode((800,600))
 pygame.mouse.set_visible(0)
-
-
-nave = pygame.image.load("nave_pequena.png")
-nave_topo = tela.get_height() - nave.get_height()
-nave_esq = tela.get_width()/2 - nave.get_width()/2
 pygame.display.set_caption("Space invaders - Code Girls")
+#desenho_vida = pygame.tela.blit("nova_nave.png",(750,50))
+desenho_vida = Vida(tela,"nova_nave.png",730,10)
+desenho_vida1 = Vida(tela,"nova_nave.png",650,10)
+desenho_vida2 = Vida(tela,"nova_nave.png",570,10)
+grupo_vida = pygame.sprite.Group()
+grupo_vida.add(desenho_vida)
+grupo_vida.add(desenho_vida1)
+grupo_vida.add(desenho_vida2)
+#importanto imgs 
+nave1 = jogador(tela,"nova_nave.png")
 
-print(nave_topo)
-print(nave_esq)
-
-tela.blit(nave, (nave_esq,nave_topo))
+nave1.posicao(71,67,tela)
+grupo_nave = pygame.sprite.Group()
+grupo_nave.add(nave1)
 
 background = pygame.image.load("espaco.jpg")
+monstrinho = pygame.image.load('monstrinho.png')
+mae = navemae(tela,"nave_mae.png")
+nave_mae = navemae(tela,"nave_mae.png")
+nave_mae.posicao(0,0)
+grupo_nave_mae = pygame.sprite.Group()
+grupo_nave_mae.add(nave_mae)
+tirom = shots(tela,"shot.png",2)
+grupo_tirosm = pygame.sprite.Group()
 
-# lista_monstros = []
-# for i in range(400,560,40):
-# 	for j in range(-300,300,40):
-# 		novo_monstro = monstros(tela,"monstrinho.png", j, -i)
-# 		lista_monstros.append(novo_monstro)
+
+#nave_topo = tela.get_height() - nave.get_height()
+#nave_esq = tela.get_width()/2 - nave.get_width()/2
+nave_topo = 520
+nave_esq = 350
+
+
+# carregando os sound effects
+
+shoot_sound = pygame.mixer.Sound("laser_shoot.wav")
+
+#shoot_sound.play() só colocar no loop princ
+
+myfont = pygame.font.SysFont('Lucida Console', 30)
+myfont1 = pygame.font.SysFont('Lucida Console', 100)
+fim = myfont1.render('Você venceu!!!!!!', False, (255,255,255))
+gameover = myfont1.render('Game Over...',False, (255,255,255))
+
+
+grupo_tiros = pygame.sprite.Group()
+tiro = 0
+numero = 0
+pontos = 0
+
 
 grupo_monstro = pygame.sprite.Group()
-for i in range(70,200,40):
-	for j in range(50,750,40):
-		#novo_monstro = monstros(tela,"monstrinho.png", j, -i)
-		#novo_monstro.desenha()
-		novo_monstro = monstros(tela,"monstrinho.png")
+for i in range(100,300,40):
+	for j in range(100,700,40):
+
+		novo_monstro = monstrosgif(tela,"m1.png","m3.png")	
 		novo_monstro.posicao(j, i)
 		grupo_monstro.add(novo_monstro)
 
-# tiro = shots(tela, "shot.png")
-# tiro2 = shots(tela, "shot.png")
-# tiro3 = shots(tela, "shot.png")
-# tiro4 = shots(tela, "shot.png")
-# tiro5 = shots(tela, "shot.png")
-#atirar_y = 0
-#atirar_x = 0
-#tiros = []
-grupo_tiros = pygame.sprite.Group()
-monstrinho = pygame.image.load('monstrinho.png')
-tiro = 0
 
-print(nave.get_width())
+
+
+#ARRUMAR A POSICAO DO GIF E O TEMPO DE TICK (clock.tick(4))
+#COLOCAR ELES NO LUGAR DOS MONSTROS ATUAIS 
+
+contagem = 0
+acertosnavemae = 0
+c_tirom = 0
+vida = 3
+####################################################################################
 
 while True:
 	for evento in pygame.event.get():
@@ -116,60 +227,108 @@ while True:
 		elif evento.type == MOUSEBUTTONDOWN:
 			# tiros.append([event.pos[0],500])
 			# for t in tiros:
-			tiro = shots(tela, "shot.png")
-			tiro.posicao(x,nave_topo)
+			tiro = shots(tela, "shot.png",1)
+			tiro.posicao(x+34,nave_topo)
 			grupo_tiros.add(tiro)
-			grupo_tiros.draw(tela)
+			shoot_sound.play()
 
-			# for b in range(len(tiros)):
-			# 	tiros[b][0]-=10
+	posicoesmx = []
+	posicoesmy = []
 
-			# for t in tiros:
-			# 	if t[0]<0:
-			# 		tiros.remove(t)
+	for i in grupo_monstro:
+		g = i.rect.x
+		f = i.rect.y
+		posicoesmx.append(g)
+		posicoesmy.append(f)
 
 
-			#atirar_y = nave_topo
-			#atirar_x = x
+	c_tirom += 1
+	if len(posicoesmx) != 0:
+		if c_tirom >= 100:
+			g = random.randint(0,len(posicoesmx)-1)
+			tirom = shots(tela,"shot_monstro.png",2)
+			tirom.posicao(posicoesmx[g],posicoesmy[g])
+			grupo_tirosm.add(tirom)
+			c_tirom = 0
 
+
+#---------------------------------#
 	tela.blit(background, (0, 0))
 
 	x,y = pygame.mouse.get_pos()
-	tela.blit(nave, (x-nave.get_width()/2,nave_topo))
+	#nave.posicao(x,y,tela)
+	#tela.blit(nave, (x-nave.get_width()/2,nave_topo))
 	#tela.fill([0,0,0])
-
+	grupo_nave.draw(tela)
+	grupo_nave_mae.draw(tela)
 	grupo_monstro.draw(tela)
 	grupo_tiros.draw(tela)
-
-					
-
-	#if atirar_y > 0:
-		#tela.blit(tiro, (atirar_x,atirar_y))
-		#atirar_y -= 15
-
-#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-	if tiro in grupo_tiros:
-
-		pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
-	# for monstro in monstros_atingidos:
-	# 	grupo_monstro.kill(novo_monstro)
+	grupo_tirosm.draw(tela)
+	grupo_vida.draw(tela)
 
 
-	# lista_sobreviventes = []
-	# for k in range(len(grupo_monstro)):
-	# 	monstro = grupo_monstro[k]
-	# 	if not interseccao(monstro.rect.x, monstro.rect.y, atirar_x, atirar_y):
-	# 		lista_sobreviventes.append(k)
 
-	# monstros_restantes = []
-	# for k in lista_sobreviventes:
-	# 	monstros_restantes.append(lista_monstros[k])
+	col = pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
+	colnavemae = pygame.sprite.groupcollide(grupo_tiros,grupo_nave_mae,True,False)
+	colmatajoga = pygame.sprite.groupcollide(grupo_tirosm,grupo_nave,True,False)
+	for i in col:
+		pontos += 1
+	ponto = myfont.render('Pontuação: {0}'.format(pontos), False, (255,255,255))
+	tela.blit(ponto,(10,10))
 
-	# lista_monstros = monstros_restantes
+	for i in colmatajoga:
+		vida -= 1
+	if vida == 0:
+		nave1.kill()
+	if vida == 2:
+		desenho_vida2.kill()
+	if vida == 1:
+		desenho_vida1.kill()
+
+	for i in colnavemae:
+		acertosnavemae += 1	
+	if acertosnavemae >= 10:
+		nave_mae.kill()
+		pontos += 10
+		acertosnavemae = 0
+
+	if len(grupo_monstro) == 0 and len(grupo_nave_mae) == 0:
+		#tela.fill([0,0,0])
+		#tela.blit(fim,(100,220))
+		grupo_monstro = pygame.sprite.Group()
+		for i in range(100,300,40):
+			for j in range(100,700,40):
+				novo_monstro = monstrosgif(tela,"m1.png","m3.png")	
+				novo_monstro.posicao(j, i)
+				grupo_monstro.add(novo_monstro)
+
+		nave_mae = navemae(tela,"nave_mae.png")
+		nave_mae.posicao(0,0)
+		grupo_nave_mae = pygame.sprite.Group()
+		grupo_nave_mae.add(nave_mae)
+
+
+	if len(grupo_nave) == 0:
+		#tela.fill([0,0,0])
+		#tela.blit(gameover,(100,220))
+		for i in range(100,300,40):
+			for j in range(100,700,40):
+
+				novo_monstro = monstrosgif(tela,"m1.png","m3.png")	
+				novo_monstro.posicao(j, i)
+				grupo_monstro.add(novo_monstro)
+
 
 	grupo_tiros.update()
 	grupo_monstro.update()
+	grupo_nave_mae.update()
 	pygame.display.update()
+	grupo_tirosm.update()
+	grupo_nave.update(x)
 
 	pygame.display.flip()
 	clock.tick(60)
+
+
+
+
