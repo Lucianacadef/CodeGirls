@@ -309,14 +309,9 @@ while True:
 
 
 	if len(grupo_nave) == 0:
-		#tela.fill([0,0,0])
-		#tela.blit(gameover,(100,220))
-		for i in range(100,300,40):
-			for j in range(100,700,40):
+		tela.fill([0,0,0])
+		tela.blit(gameover,(100,220))
 
-				novo_monstro = monstrosgif(tela,"m1.png","m3.png")	
-				novo_monstro.posicao(j, i)
-				grupo_monstro.add(novo_monstro)
 
 
 	grupo_tiros.update()
