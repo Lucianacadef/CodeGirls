@@ -36,15 +36,18 @@ class jogador(pygame.sprite.Sprite):
 	
 
 class monstrosgif(pygame.sprite.Sprite):
-	def __init__(self,tela,imagem1,imagem2):
+	def __init__(self,tela,imagem1,imagem2,bomba):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.image.load(imagem1)
 		self.image1 = pygame.image.load(imagem1)
 		self.image2 = pygame.image.load(imagem2)
+		self.image3 = pygame.image.load(bomba)
 		self.tela = tela
 		self.passo1 = 0
 		self.passo2 = 0
+		self.passo3 = 0
+		self.morreu = 0
 		self.direcao = 1
 		self.type = 1
 
@@ -59,21 +62,29 @@ class monstrosgif(pygame.sprite.Sprite):
 
 
 	def update(self):
-		if self.passo1 < 15:
-			self.image = self.image2
-		elif self.passo1 >= 15:
-			self.image = self.image1
-		if self.passo1 == 30:
-			self.passo1 = 0
-		else:
-			self.passo1 += 1
+		if self.image == self.image3:
+			self.passo3 +=1
+			if self.passo3 >=20:
+				self.kill()
+				# self.passo3 = 0
 
-		if self.passo2 == 10:
-			self.direcao = -1
-		elif self.passo2 == -10:
-			self.direcao = 1
-		self.passo2 += self.direcao
-		self.rect.x += self.direcao
+			pass
+		if self.image != self.image3:
+			if self.passo1 < 15:
+				self.image = self.image2
+			elif self.passo1 >= 15:
+				self.image = self.image1
+			if self.passo1 == 30:
+				self.passo1 = 0
+			else:
+				self.passo1 += 1
+
+			if self.passo2 == 10:
+				self.direcao = -1
+			elif self.passo2 == -10:
+				self.direcao = 1
+			self.passo2 += self.direcao
+			self.rect.x += self.direcao
 
 ################### nave mae ############################
 class navemae(pygame.sprite.Sprite):
@@ -150,7 +161,6 @@ clock = pygame.time.Clock()
 tela = pygame.display.set_mode((800,600))
 pygame.mouse.set_visible(0)
 pygame.display.set_caption("Space invaders - Code Girls")
-#desenho_vida = pygame.tela.blit("nova_nave.png",(750,50))
 desenho_vida = Vida(tela,"nova_nave.png",730,10)
 desenho_vida1 = Vida(tela,"nova_nave.png",650,10)
 desenho_vida2 = Vida(tela,"nova_nave.png",570,10)
@@ -204,7 +214,7 @@ grupo_monstro = pygame.sprite.Group()
 for i in range(100,300,40):
 	for j in range(100,700,40):
 
-		novo_monstro = monstrosgif(tela,"m1.png","m3.png")	
+		novo_monstro = monstrosgif(tela,"m1.png","m3.png","explosion.png")	
 		novo_monstro.posicao(j, i)
 		grupo_monstro.add(novo_monstro)
 
@@ -225,8 +235,7 @@ while True:
 		if evento.type == pygame.QUIT:
 			sys.exit()
 		elif evento.type == MOUSEBUTTONDOWN:
-			# tiros.append([event.pos[0],500])
-			# for t in tiros:
+
 			tiro = shots(tela, "shot.png",1)
 			tiro.posicao(x+34,nave_topo)
 			grupo_tiros.add(tiro)
@@ -256,9 +265,7 @@ while True:
 	tela.blit(background, (0, 0))
 
 	x,y = pygame.mouse.get_pos()
-	#nave.posicao(x,y,tela)
-	#tela.blit(nave, (x-nave.get_width()/2,nave_topo))
-	#tela.fill([0,0,0])
+
 	grupo_nave.draw(tela)
 	grupo_nave_mae.draw(tela)
 	grupo_monstro.draw(tela)
@@ -268,11 +275,17 @@ while True:
 
 
 
-	col = pygame.sprite.groupcollide(grupo_tiros,grupo_monstro,True,True)
+	col = pygame.sprite.groupcollide(grupo_monstro,grupo_tiros,False,True)
 	colnavemae = pygame.sprite.groupcollide(grupo_tiros,grupo_nave_mae,True,False)
 	colmatajoga = pygame.sprite.groupcollide(grupo_tirosm,grupo_nave,True,False)
 	for i in col:
 		pontos += 1
+
+	for i in grupo_monstro:
+		if i in col:
+			i.image = i.image3
+				
+			
 	ponto = myfont.render('Pontuação: {0}'.format(pontos), False, (255,255,255))
 	tela.blit(ponto,(10,10))
 
@@ -298,7 +311,7 @@ while True:
 		grupo_monstro = pygame.sprite.Group()
 		for i in range(100,300,40):
 			for j in range(100,700,40):
-				novo_monstro = monstrosgif(tela,"m1.png","m3.png")	
+				novo_monstro = monstrosgif(tela,"m1.png","m3.png","explosion.png")	
 				novo_monstro.posicao(j, i)
 				grupo_monstro.add(novo_monstro)
 
