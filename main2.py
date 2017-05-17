@@ -190,9 +190,9 @@ tela = pygame.display.set_mode((800,600))
 
 pygame.display.set_caption("Space invaders - Code Girls")
 desenho_vida = Vida(tela,"nave_vida.png",730,10)
-desenho_vida1 = Vida(tela,"nave_vida.png",650,10)
-desenho_vida2 = Vida(tela,"nave_vida.png",570,10)
-desenho_vida3 = Vida(tela,"nave_vida.png",490,10)
+desenho_vida1 = Vida(tela,"nave_vida.png",685,10)
+desenho_vida2 = Vida(tela,"nave_vida.png",640,10)
+desenho_vida3 = Vida(tela,"nave_vida.png",595,10)
 grupo_vida = pygame.sprite.Group()
 grupo_vida.add(desenho_vida)
 grupo_vida.add(desenho_vida1)
@@ -200,7 +200,7 @@ grupo_vida.add(desenho_vida2)
 #importanto imgs 
 nave1 = jogador(tela,"nova_nave.png")
 
-nave1.posicao(71,67,tela)
+nave1.posicao(100,100,tela)
 grupo_nave = pygame.sprite.Group()
 grupo_nave.add(nave1)
 
@@ -208,7 +208,7 @@ background = pygame.image.load("espaco.jpg")
 monstrinho = pygame.image.load('monstrinho.png')
 mae = navemae(tela,"nave_mae.png")
 nave_mae = navemae(tela,"nave_mae.png")
-nave_mae.posicao(0,0)
+nave_mae.posicao(0,55)
 grupo_nave_mae = pygame.sprite.Group()
 grupo_nave_mae.add(nave_mae)
 tirom = shots(tela,"shot.png","shot.png",2,1)
@@ -242,7 +242,7 @@ pontos = 0
 
 
 grupo_monstro = pygame.sprite.Group()
-for i in range(100,300,40):
+for i in range(150,300,40):
 	for j in range(100,700,40):
 
 		novo_monstro = monstrosgif(tela,"m1.png","m3.png","explosion.png")	
