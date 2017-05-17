@@ -244,6 +244,7 @@ display_width = 800
 display_height = 600
 
 clock = pygame.time.Clock()
+<<<<<<< HEAD
 tela = pygame.display.set_mode((display_width,display_height))
 
 pygame.display.set_caption("Space invaders - Code Girls")
@@ -251,6 +252,15 @@ desenho_vida = Vida(tela,"nave_vida.png",730,10)
 desenho_vida1 = Vida(tela,"nave_vida.png",685,10)
 desenho_vida2 = Vida(tela,"nave_vida.png",640,10)
 desenho_vida3 = Vida(tela,"nave_vida.png",595,10)
+=======
+tela = pygame.display.set_mode((800,600))
+
+pygame.display.set_caption("Space invaders - Code Girls")
+desenho_vida = Vida(tela,"nave_vida.png",730,10)
+desenho_vida1 = Vida(tela,"nave_vida.png",650,10)
+desenho_vida2 = Vida(tela,"nave_vida.png",570,10)
+desenho_vida3 = Vida(tela,"nave_vida.png",490,10)
+>>>>>>> af1165a9d1d6039d7a71c09adaa5affa625dd178
 grupo_vida = pygame.sprite.Group()
 grupo_vida.add(desenho_vida)
 grupo_vida.add(desenho_vida1)
@@ -320,11 +330,15 @@ protecao = 0
 C_protecao = 0
 c_tiroG = 0
 C_colisoes = 0
+<<<<<<< HEAD
 
+=======
+>>>>>>> af1165a9d1d6039d7a71c09adaa5affa625dd178
 ####################################################################################
 tela_atual = "intro"
 
 while True:
+<<<<<<< HEAD
 	if tela_atual == "intro":
 	    intro = True
 	    while intro:
@@ -521,3 +535,172 @@ while True:
 	elif tela_atual == "sair":
 	    pygame.quit()
 	    quit()
+=======
+	pygame.mouse.set_visible(0)
+	for evento in pygame.event.get():
+		if evento.type == pygame.QUIT:
+			sys.exit()
+		elif evento.type == MOUSEBUTTONDOWN:
+
+			tiro = shots(tela, "shot.png","shotG.png",1,q)
+			tiro.posicao(x+34,nave_topo)
+			grupo_tiros.add(tiro)
+			shoot_sound.play()
+
+	posicoesmx = []
+	posicoesmy = []
+
+	for i in grupo_monstro:
+		g = i.rect.x
+		f = i.rect.y
+		posicoesmx.append(g)
+		posicoesmy.append(f)
+
+
+	c_tirom += 1
+	if len(posicoesmx) != 0:
+		if c_tirom >= 100:
+			g = random.randint(0,len(posicoesmx)-1)
+			tirom = shots(tela,"shot_monstro.png","shot_monstro.png",2,1)
+			tirom.posicao(posicoesmx[g],posicoesmy[g])
+			grupo_tirosm.add(tirom)
+			c_tirom = 0
+
+	c_boost += 1
+	if len(posicoesmx) != 0:
+		if c_boost >= 400:
+			a = random.randint(0,len(ajudas)-1)
+			g = random.randint(0,len(posicoesmx)-1)
+			boost = premio(tela,"monstrinho.png",ajudas[a])
+			print(ajudas[a])
+			boost.posicao(posicoesmx[g],posicoesmy[g])
+			grupo_boost.add(boost)
+			c_boost = 0
+	ganhaboost = pygame.sprite.groupcollide(grupo_boost,grupo_nave,True,False)
+	for i in ganhaboost:
+		if vida == 4:
+			i.ajuda = "campodeforca"
+		if i.ajuda == "life":
+			vida += 1
+			if vida == 2:
+				grupo_vida.add(desenho_vida1)
+			elif vida == 3:
+				grupo_vida.add(desenho_vida2)
+			elif vida == 4:
+				grupo_vida.add(desenho_vida3)
+		elif i.ajuda == "tiro3":
+			q = 3
+		elif i.ajuda == "campodeforca":
+			protecao = 1
+	if q == 3:
+		c_tiroG += 1
+	if c_tiroG >= 300:
+		q = 1
+		c_tiroG = 0
+	if q == 3:
+		mostraarma = myfont2.render('Super tiro ativo!', False, (255,0,0))
+		tela.blit(mostraarma,(10,550))
+
+#---------------------------------#
+	tela.blit(background, (0, 0))
+
+	x,y = pygame.mouse.get_pos()
+
+	grupo_nave.draw(tela)
+	grupo_nave_mae.draw(tela)
+	grupo_monstro.draw(tela)
+	grupo_tiros.draw(tela)
+	grupo_tirosm.draw(tela)
+	grupo_vida.draw(tela)
+	grupo_boost.draw(tela)
+
+
+	if q == 3 :
+		col = pygame.sprite.groupcollide(grupo_monstro,grupo_tiros,False,False)
+		C_colisoes += 1
+		if C_colisoes >= 10:
+			col = pygame.sprite.groupcollide(grupo_monstro,grupo_tiros,False,True)
+			C_colisoes = 0
+	if q == 1:
+		col = pygame.sprite.groupcollide(grupo_monstro,grupo_tiros,False,True)
+	colnavemae = pygame.sprite.groupcollide(grupo_tiros,grupo_nave_mae,True,False)
+	if protecao == 0:
+		colmatajoga = pygame.sprite.groupcollide(grupo_tirosm,grupo_nave,True,False)
+	elif protecao == 1:
+		C_protecao +=1
+		if C_protecao >= 300:
+			C_protecao = 0
+			protecao = 0
+	if protecao == 1:
+		mostracampo = myfont2.render('Campo de força ativo!', False, (255,0,0))
+		tela.blit(mostracampo,(10,550))
+
+	for i in col:
+		pontos += 1
+
+	for i in grupo_monstro:
+		if i in col:
+			i.image = i.image3
+				
+			
+	ponto = myfont.render('Pontuação: {0}'.format(pontos), False, (255,255,255))
+	tela.blit(ponto,(10,10))
+
+	for i in colmatajoga:
+		vida -= 1
+	if vida == 0:
+		nave1.kill()
+	if vida == 3:
+		desenho_vida3.kill()
+	if vida == 2:
+		desenho_vida2.kill()
+	if vida == 1:
+		desenho_vida1.kill()
+
+	for i in colnavemae:
+		if i.qualidade == 3:
+			acertosnavemae += 2
+		if i.qualidade == 1:
+			acertosnavemae += 1	
+	if acertosnavemae >= 10:
+		nave_mae.kill()
+		pontos += 15
+		acertosnavemae = 0
+
+	if len(grupo_monstro) == 0 and len(grupo_nave_mae) == 0:
+		#tela.fill([0,0,0])
+		#tela.blit(fim,(100,220))
+		grupo_monstro = pygame.sprite.Group()
+		for i in range(100,300,40):
+			for j in range(100,700,40):
+				novo_monstro = monstrosgif(tela,"m1.png","m3.png","explosion.png")	
+				novo_monstro.posicao(j, i)
+				grupo_monstro.add(novo_monstro)
+
+		nave_mae = navemae(tela,"nave_mae.png")
+		nave_mae.posicao(0,0)
+		grupo_nave_mae = pygame.sprite.Group()
+		grupo_nave_mae.add(nave_mae)
+
+
+	if len(grupo_nave) == 0:
+		tela.fill([0,0,0])
+		tela.blit(gameover,(100,220))
+
+
+
+	grupo_tiros.update()
+	grupo_monstro.update()
+	grupo_nave_mae.update()
+	pygame.display.update()
+	grupo_tirosm.update()
+	grupo_nave.update(x)
+	grupo_boost.update()
+
+	pygame.display.flip()
+	clock.tick(60)
+
+
+
+
+>>>>>>> af1165a9d1d6039d7a71c09adaa5affa625dd178
