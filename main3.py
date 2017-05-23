@@ -213,8 +213,8 @@ def button(msg,x,y,w,h,ic,ac):
 #cores do menu 
 black = (0,0,0)
 white = (255,255,255)
-red = (200,0,0)
-green = (0,200,0)
+red = (0,0,0)
+green = (0,0,0)
 bright_red = (255,0,0)
 bright_green = (0,255,0)
 
@@ -234,8 +234,8 @@ def game_intro():
         TextRect.center = ((display_width/2),(display_height/2))
         tela.blit(TextSurf, TextRect)
         #msg,x,y,width,height, cores, p comecar o loop
-        button("Jogar",150,450,100,50,green,bright_green,gameloop)
-        button("Sair",550,450,100,50,red,bright_red,quitgame)
+        button("Jogar",250,400,100,50,green,bright_green,gameloop)
+        button("Sair",250,475,100,50,red,bright_red,quitgame)
 
         pygame.display.update()
         clock.tick(15)
@@ -357,13 +357,13 @@ while True:
 	        tela.blit(background, (0, 0))
         	fontmenu = pygame.font.Font('trench100free.ttf', 90)
         	titulo = fontmenu.render('Space Invaders', False, white)
-        	tela.blit(titulo,(150,200))
+        	tela.blit(titulo,(110,80))
         	#TextSurf, TextRect = text_objects("Space Invaders", fontmenu)
 	        #TextRect.center = ((display_width/2),(display_height/2))
 	        #tela.blit(TextSurf, TextRect, (0,0,0))
 	        #msg,x,y,width,height, cores, p comecar o loop
-	        button_play_clicked = button("Jogar",150,450,100,50,green,bright_green)
-	        button_exit_clicked = button("Sair",550,450,100,50,red,bright_red)
+	        button_play_clicked = button("Jogar",350,400,100,50,green,bright_green)
+	        button_exit_clicked = button("Sair",350,475,100,50,red,bright_red)
 
 	        if button_play_clicked:
 	        	tela_atual = "jogo"
