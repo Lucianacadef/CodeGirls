@@ -230,7 +230,7 @@ def game_intro():
                 
         tela.fill(white)
         largeText = pygame.font.SysFont("comicsansms",90)
-        TextSurf, TextRect = text_objects("Space Invators", largeText)
+        TextSurf, TextRect = text_objects("Space Invaders", largeText)
         TextRect.center = ((display_width/2),(display_height/2))
         tela.blit(TextSurf, TextRect)
         #msg,x,y,width,height, cores, p comecar o loop
@@ -300,7 +300,7 @@ nave_esq = 350
 # carregando os sound effects
 
 shoot_sound = pygame.mixer.Sound("laser_shoot.wav")
-#mus_game = pygame.mixer.Sound("subdream.wav")
+mus_game = pygame.mixer.Sound("subdream.wav")
 #shoot_sound.play() só colocar no loop princ
 myfont = pygame.font.SysFont('Lucida Console', 30)
 myfont1 = pygame.font.SysFont('Lucida Console', 100)
@@ -343,6 +343,8 @@ C_colisoes = 0
 ####################################################################################
 tela_atual = "intro"
 
+z = 0
+
 while True:
 # <<<<<<< HEAD
 	if tela_atual == "intro":
@@ -356,7 +358,7 @@ while True:
 	                
 	        tela.fill(white)
 	        largeText = pygame.font.SysFont("comicsansms",90)
-	        TextSurf, TextRect = text_objects("Space Invaters", largeText)
+	        TextSurf, TextRect = text_objects("Space Invaders", largeText)
 	        TextRect.center = ((display_width/2),(display_height/2))
 	        tela.blit(TextSurf, TextRect)
 	        #msg,x,y,width,height, cores, p comecar o loop
@@ -410,7 +412,7 @@ while True:
 			if c_boost >= 400:
 				a = random.randint(0,len(ajudas)-1)
 				g = random.randint(0,len(posicoesmx)-1)
-				boost = premio(tela,"monstrinho.png",ajudas[a])
+				boost = premio(tela,"rainho.png",ajudas[a])
 				print(ajudas[a])
 				boost.posicao(posicoesmx[g],posicoesmy[g])
 				grupo_boost.add(boost)
@@ -441,7 +443,14 @@ while True:
 			tela.blit(mostraarma,(10,550))
 
 	#---------------------------------#
-		tela.blit(background, (0, 0))
+		
+		rel_z = z % background.get_rect().height
+		tela.blit(background,(0, rel_z - background.get_rect().height))
+		if rel_z < background.get_rect().height:
+			tela.blit(background,(0,rel_z))
+		z -= 1
+
+		
 
 		x,y = pygame.mouse.get_pos()
 
@@ -526,7 +535,7 @@ while True:
 			tela.fill([0,0,0])
 			tela.blit(gameover,(100,220))
 
-		#mus_game.play()
+		mus_game.play()
 		grupo_tiros.update()
 		grupo_monstro.update()
 		grupo_nave_mae.update()
@@ -577,7 +586,7 @@ while True:
 		if c_boost >= 400:
 			a = random.randint(0,len(ajudas)-1)
 			g = random.randint(0,len(posicoesmx)-1)
-			boost = premio(tela,"monstrinho.png",ajudas[a])
+			boost = premio(tela,"rainho.png",ajudas[a])
 			print(ajudas[a])
 			boost.posicao(posicoesmx[g],posicoesmy[g])
 			grupo_boost.add(boost)
@@ -608,7 +617,7 @@ while True:
 		tela.blit(mostraarma,(10,550))
 
 #---------------------------------#
-	tela.blit(background, (0, 0))
+
 
 	x,y = pygame.mouse.get_pos()
 
@@ -686,7 +695,7 @@ while True:
 		nave_mae = navemae(tela,"nave_mae.png")
 		nave_mae.posicao(0,0)
 		grupo_nave_mae = pygame.sprite.Group()
-		grupo_nave_mae.add(nave_mae)
+		grupo_nave_mae.add(nave_mae)	
 
 
 	if len(grupo_nave) == 0:
@@ -705,8 +714,6 @@ while True:
 
 	pygame.display.flip()
 	clock.tick(60)
-
-
 
 
 # >>>>>>> af1165a9d1d6039d7a71c09adaa5affa625dd178
