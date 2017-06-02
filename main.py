@@ -330,7 +330,6 @@ def organizadados(dados):
 		myfont.set_bold(True)
 		pontos = myfont.render('{0} : {1}'.format(y,z) , False, (255,255,255))
 		dadosorg.append(pontos)
-	print(dadosorg)
 	return dadosorg
 
 #compartilhado com o grupo do jogo da dança
@@ -563,7 +562,7 @@ while True:
 					sys.exit()
 		tela.blit(instr2, (0, 0))
 		button_exitgame_clicked = buttonback("Menu",25,7,50,25,red,blue)
-		button_back_clicked = buttonback ("Back", 725, 525, 50, 25, yellow, blue)
+		button_back_clicked = buttonback ("Back", 725, 545, 50, 25, yellow, blue)
 		if button_back_clicked:
 			tela_atual = "instrucoes"
 			
@@ -829,7 +828,6 @@ while True:
 					a = random.randint(0,len(ajudas)-1)
 					g = random.randint(0,len(posicoesmx)-1)
 					boost = premio(tela,imagemajudas[a],ajudas[a])
-					print(ajudas[a])
 					boost.posicao(posicoesmx[g],posicoesmy[g])
 					grupo_boost.add(boost)
 					c_boost = 0
