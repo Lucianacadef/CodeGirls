@@ -45,10 +45,9 @@ pygame.font.init()
 
 
 class jogador(pygame.sprite.Sprite):
-	def __init__(self,tela,imagem,imagem1):
+	def __init__(self,tela,imagem):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.image.load(imagem)
-		self.image1 = pygame.image.load(imagem1)
 		self.tela = tela
 
 
@@ -636,7 +635,7 @@ while True:
 			grupo_boost = pygame.sprite.Group() 
 			grupo_tirosnavem =  pygame.sprite.Group()
 
-			nave1 = jogador(tela,"nova_nave.png","monstrinho.png")
+			nave1 = jogador(tela,"nova_nave.png")
 			nave1.posicao(100,100,tela)
 			grupo_nave = pygame.sprite.Group()
 			grupo_nave.add(nave1)
