@@ -6,11 +6,9 @@ import random
 import json
 import time
 
-#compartilhado com o grupo do jogo da dança
 with open('highscore.json','r') as arquivo:
 	dados = json.load(arquivo)
 
-#compartilhado com o grupo do jogo da dança
 letras={}
 letras[K_a]='a'
 letras[K_b]='b'
@@ -106,7 +104,7 @@ class monstrosgif(pygame.sprite.Sprite):
 			if self.passo3 >=10:
 				self.kill()
 		
-		if self.descida < 300:
+		if self.descida < 100:
 			if self.image != self.image3:
 				if self.passo1 < 40:
 					self.image = self.image2
@@ -146,20 +144,14 @@ class monstrosgif(pygame.sprite.Sprite):
 
 ################### nave mae ############################
 class navemae(pygame.sprite.Sprite):
-	def __init__(self,tela,imagem,imagem1,imagem2,bomba):
+	def __init__(self,tela,imagem):
 		pygame.sprite.Sprite.__init__(self)
 
 		self.image = pygame.image.load(imagem)
-		self.image1 = pygame.image.load(imagem1)
-		self.image2 = pygame.image.load(imagem2)
-		self.image3 = pygame.image.load(bomba)
 		self.tela = tela
 		self.passo = 0
 		self.direcao = 1
 		self.type = 1
-		self.passo1 = 0
-		self.passo2 = 0
-		self.passo3 = 0
 
 	def posicao(self,x,y):
 		self.rect = self.image.get_rect() 
@@ -180,28 +172,6 @@ class navemae(pygame.sprite.Sprite):
 		
 		self.passo += self.direcao
 		self.rect.x += self.direcao
-
-		if self.image == self.image3:
-			self.passo3 += 1
-			if self.passo3 >=10:
-				self.kill()
-		
-		if self.image != self.image3:
-			if self.passo1 < 40:
-				self.image = self.image2
-			elif self.passo1 >= 40:
-				self.image = self.image1
-			if self.passo1 == 80:
-				self.passo1 = 0
-			else:
-				self.passo1 += 1
-
-			# if self.passo2 >= 30:
-			# 	self.direcao = -1
-			# elif self.passo2 <= -30:
-			# 	self.direcao = 1
-			# self.passo2 += self.direcao
-			# self.rect.x += self.direcao
 
 
 #######################tiros############################
@@ -248,9 +218,7 @@ class premio(pygame.sprite.Sprite):
 	def __init__(self,tela,imagem,ajuda):
 		pygame.sprite.Sprite.__init__(self)
 
-		#self.image = pygame.image.load(imagem)
-		self.image = pygame.image.load(imagem) #vida
-
+		self.image = pygame.image.load(imagem)
 		self.tela = tela
 		self.ajuda = ajuda
 
@@ -279,6 +247,10 @@ class Vida(pygame.sprite.Sprite):
 		self.rect.y = y
 		self.tela = tela
 
+
+def quitgame():
+	pygame.quit()
+	quit()
  
 def text_objects(text, font):
 	textSurface = font.render(text, True, white)
@@ -321,8 +293,9 @@ def buttonback(msg,x,y,w,h,ic,ac):
 	return button_was_clicked
 
 
+
+
 #highscore
-#compartilhado com o grupo do jogo da dança
 def organizadados(dados):
 	highscore = sorted(dados.items(), key=lambda x: x[1], reverse=True)
 	dadosorg = []
@@ -330,9 +303,9 @@ def organizadados(dados):
 		myfont.set_bold(True)
 		pontos = myfont.render('{0} : {1}'.format(y,z) , False, (255,255,255))
 		dadosorg.append(pontos)
+	print(dadosorg)
 	return dadosorg
 
-#compartilhado com o grupo do jogo da dança
 def lerpontos(dadosorg,tela):
 	for i in range(130,580,50):
 		if i == 130:
@@ -373,8 +346,12 @@ def lerpontos(dadosorg,tela):
 			tela.blit(dadosorg[16],(425,i))
 		elif i == 530:
 			tela.blit(dadosorg[17],(425,i))
+		
 
-#compartilhado com o grupo do jogo da dança
+# def jogosalvo(dados):
+# 	highscore = json.load(dados)
+# 	return highscore
+
 def save(dados):
 	with open('highscore.json','w') as dados_salvar:
 		dados_salvar.writelines(json.dumps(dados))
@@ -401,6 +378,8 @@ tela = pygame.display.set_mode((display_width,display_height),pygame.FULLSCREEN)
 
 pygame.display.set_caption("Space Recycler's - Code Girls")
 
+
+
 background = pygame.image.load("espaco.jpg")
 quadrado_name = pygame.image.load("qua2.jpg")
 instr1 = pygame.image.load("instru1.jpg")
@@ -409,13 +388,13 @@ instr2 = pygame.image.load("instru2.jpg")
 tirom = shots(tela,"shot.png","shot.png",2,1)
 grupo_tirosm = pygame.sprite.Group()
 grupo_boost = pygame.sprite.Group()
-grupo_tirosnavem =  pygame.sprite.Group()
 
 ajudas = ["life","tiro3","campodeforca"]
-imagemajudas = ["heart.png","rainho.png","rainho.png"]
+
+
 
 shoot_sound = pygame.mixer.Sound("laser_shoot.wav")
-mus_game = pygame.mixer.Sound("Space2.wav")
+mus_game = pygame.mixer.Sound("Space1.wav")
 
 #contadores
 tiro = 0
@@ -425,7 +404,6 @@ level = 1
 contagem = 0
 acertosnavemae = 0
 c_tirom = 0
-c_tironavem = 100
 c_boost = 0
 vida = 3
 life = 1
@@ -438,7 +416,7 @@ C_gameover = 0
 jogoinicial = 0
 z = 0
 tela_atual = "intro"
-contamons = 0
+click = 0
 
 #fontes
 myfont = pygame.font.Font('trench100free.ttf', 30)
@@ -446,19 +424,17 @@ myfont1 = pygame.font.Font('trench100free.ttf', 100)
 myfont2 = pygame.font.Font('trench100free.ttf', 60)
 fontmenu = pygame.font.Font('ABeeZee-Regular.ttf', 90)
 titulo = fontmenu.render("Space Recycler's", False, white)
-#fim = myfont1.render('Você venceu!!!!!!', False, (255,255,255))
+fim = myfont1.render('Você venceu!!!!!!', False, (255,255,255))
 gameover = fontmenu.render('Game Over',False, (255,255,255))
 instruc = myfont1.render('Bem vindo ao jogo',False, (255,255,255))
-proxnivel = fontmenu.render('Próximo nível',False, (255,255,255))
+proxnivel = fontmenu.render('Próximo Nível', False, (255,255,255))
 high = fontmenu.render('High Score',False, (255,255,255))
 font_aviso = pygame.font.Font('ABeeZee-Regular.ttf', 20)
 font_aviso2 = pygame.font.Font('ABeeZee-Regular.ttf', 40)
 mostracampo = font_aviso.render('Campo de força ativo!', False, (255,255,255))
 mostraarma = font_aviso.render('Super tiro ativo!', False, (255,255,255))
-fontpont = pygame.font.Font('trench100free.ttf', 23)	
-digite_nome = font_aviso2.render('Digite seu nome:', False, (255,255,255))
-nome = ""
-listalixos = [["garrafaagua1.png","garrafaagua2.png","plastico.png"],["garrafavidro.png","garrafavidro2.png","vidro.png"],["lata1.png","lata2.png","metal.png"],["banana1.png","banana2.png","organico.png"],["pizza1.png","pizza2.png","papel.png"]]
+fontpont = pygame.font.Font('trench100free.ttf', 23)		
+digite_nome = font_aviso2.render('Digite seu nome: ', False, white)
 
 grupo_tiros = pygame.sprite.Group()
 listasom = ["Sound","Mute"]
@@ -480,11 +456,16 @@ while True:
 					
 			tela.blit(background, (0, 0))
 			
-			tela.blit(titulo,(60,80))
+			tela.blit(titulo,(70,80))
+			#TextSurf, TextRect = text_objects("Space Invaders", fontmenu)
+			#TextRect.center = ((display_width/2),(display_height/2))
+			#tela.blit(TextSurf, TextRect, (0,0,0))
+			#msg,x,y,width,height, cores, p comecar o loop
 			button_play_clicked = button("Jogar",312.5,230,175,70,black,green)
 			button_inst_clicked = button("Instruções",312.5,315,175,70,black,yellow)
 			button_score_clicked = button("High Score", 312.5,400,175,70,black,blue)
 			button_exit_clicked = button("Sair",312.5,485,175,70,black,red)
+
 
 			if button_play_clicked:
 				desenho_vida = Vida(tela,"nave_vida.png",750,10)
@@ -503,7 +484,6 @@ while True:
 				contagem = 0
 				acertosnavemae = 0
 				c_tirom = 0
-				c_tironavem = 100
 				c_boost = 0
 				vida = 3
 				life = 1
@@ -514,12 +494,11 @@ while True:
 				C_colisoes = 0
 				C_gameover = 0
 				jogoinicial = 0
-				contamons = 0
 				z = 0
-				contagemcampo = 0
 				jogoinicial = 0
 				tela_atual = "jogo"
 				intro = False
+				ss = 0
 				mus_game.play()
 				
 
@@ -556,14 +535,16 @@ while True:
 		clock.tick(60)
 
 
-
 	elif tela_atual == "instrucoes2":
 		for evento in pygame.event.get():
 				if evento.type == pygame.QUIT:
 					sys.exit()
 		tela.blit(instr2, (0, 0))
 		button_exitgame_clicked = buttonback("Menu",25,7,50,25,red,blue)
-		button_back_clicked = buttonback ("Back", 725, 545, 50, 25, yellow, blue)
+		# if button_exitgame_clicked:
+		# 	tela_atual = "intro"
+		# 	intro = True
+		button_back_clicked = buttonback ("Back", 725, 525, 50, 25, yellow, blue)
 		if button_back_clicked:
 			tela_atual = "instrucoes"
 			
@@ -572,7 +553,6 @@ while True:
 			intro = True
 		pygame.display.update()
 		clock.tick(60)
-
 
 	elif tela_atual == "high score":
 		for evento in pygame.event.get():
@@ -594,7 +574,6 @@ while True:
 		for evento in pygame.event.get():
 			if evento.type == pygame.QUIT:
 				sys.exit()
-			#compartilhado com o grupo do jogo da dança
 			if evento.type == pygame.KEYDOWN:
 			    if evento.key in letras:
 			        letra=letras[evento.key]
@@ -605,11 +584,10 @@ while True:
 			    	save(dados)
 			    	tela_atual = "intro"
 			    	intro = True
-		mus_game.stop()
 
 		tela.blit(background, (0, 0))
 		tela.blit(gameover,(150,50))
-		tela.blit(quadrado_name,(440,450))
+		tela.blit(quadrado_name,(450,450))
 		tela.blit(digite_nome,(110,450))
 		pontofim = font_aviso2.render('Pontuação: {0}'.format(pontos),False, (255,255,255))
 		tela.blit(pontofim,(270,150))
@@ -618,138 +596,50 @@ while True:
 			tela_atual = "intro"
 			intro = True
 		nometela = font_aviso.render(nome, False, (255,255,255))
-		tela.blit(nometela,(470,465))
+		tela.blit(nometela,(453,465)) #digitar o nome
 		pygame.display.update()
 		clock.tick(60)
 
 	elif tela_atual == "jogo":
 		pygame.mouse.set_visible(1)
 		if jogoinicial == 0:
-			contagemcampo = 0
-			q = 1
-			protecao = 0
-			C_protecao = 0
-			c_tiroG = 0
-			C_colisoes = 0
 			nome = ""
-			grupo_tirosm = pygame.sprite.Group()
-			grupo_boost = pygame.sprite.Group() 
-			grupo_tirosnavem =  pygame.sprite.Group()
 
 			nave1 = jogador(tela,"nova_nave.png")
 			nave1.posicao(100,100,tela)
 			grupo_nave = pygame.sprite.Group()
 			grupo_nave.add(nave1)
 
-			nave_mae = navemae(tela,"nave_mae1.png","nave_mae1.png","nave_mae2.png","metal.png")
+			nave_mae = navemae(tela,"nave_mae.png")
 			nave_mae.posicao(0,55)
 			grupo_nave_mae = pygame.sprite.Group()
 			grupo_nave_mae.add(nave_mae)
 
 			if level == 1:
-
-				mortenavemae = 10
 				grupo_monstro = pygame.sprite.Group()
-				for i in range(150,350,50):
-					for j in range(100,700,80):
-						a = 0
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],1)	
+				for i in range(150,300,40):
+					for j in range(100,700,40):
+
+						novo_monstro = monstrosgif(tela,"m1.png","m3.png","explosion.png",1)	
 						novo_monstro.posicao(j, i)
 						grupo_monstro.add(novo_monstro)
-				liberatiro = 250
-				liberatirom = 350
 
 			elif level == 2:
 
-				mortenavemae = 15
-				grupo_monstro = pygame.sprite.Group()
-				for i in range(150,350,40):
-					for j in range(100,700,50):
-
-						a = random.randint(0,1)
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],1)	
-						novo_monstro.posicao(j, i)
-						grupo_monstro.add(novo_monstro)
-				liberatiro = 200
-				liberatirom = 350
-
-			elif level == 3:
-
-				mortenavemae = 20
-				liberatiro = 150
-				liberatirom = 350
 				grupo_monstro = pygame.sprite.Group()
 				for i in range(150,300,40):
 					for j in range(100,700,80):
 
-						a = random.randint(0,2)
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],1)	
+						novo_monstro = monstrosgif(tela,"m1.png","m3.png","explosion.png",1)	
 						novo_monstro.posicao(j, i)
 						grupo_monstro.add(novo_monstro)
-
 
 				for i in range(150,300,40):
 					for j in range(140,660,80):
 
-						a = random.randint(0,2)
-						listarandom = [1,2,1,1,1,1,2,1,1,1,1,1,1]
-						b = random.randint(0,len(listarandom)-1)
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],listarandom[b])	
+						novo_monstro = monstrosgif(tela,"m1.png","m3.png","explosion.png",2)	
 						novo_monstro.posicao(j, i)
 						grupo_monstro.add(novo_monstro)
-
-			elif level == 4:
-
-				mortenavemae = 25
-				liberatiro = 150
-				liberatirom = 250
-				grupo_monstro = pygame.sprite.Group()
-				for i in range(150,300,40):
-					for j in range(100,700,80):
-
-						a = random.randint(0,3)
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],1)	
-						novo_monstro.posicao(j, i)
-						grupo_monstro.add(novo_monstro)
-
-
-				for i in range(150,300,40):
-					for j in range(140,660,80):
-
-						a = random.randint(0,3)
-						listarandom = [1,2,1,2,1,1,2,1,1,1,2,1,2]
-						b = random.randint(0,len(listarandom)-1)
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],listarandom[b])	
-						novo_monstro.posicao(j, i)
-						grupo_monstro.add(novo_monstro)
-
-			elif level == 5:
-
-				mortenavemae = 30
-				liberatiro = 150
-				liberatirom = 250
-				grupo_monstro = pygame.sprite.Group()
-				for i in range(150,300,40):
-					for j in range(100,700,80):
-
-						a = random.randint(0,2)
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],1)	
-						novo_monstro.posicao(j, i)
-						grupo_monstro.add(novo_monstro)
-
-
-				for i in range(150,300,40):
-					for j in range(140,660,80):
-
-						a = random.randint(0,4)
-						listarandom = [1,2,1,2,1,1,2,1,2,2,1,2,1]
-						b = random.randint(0,len(listarandom)-1)
-						novo_monstro = monstrosgif(tela,listalixos[a][0],listalixos[a][1],listalixos[a][2],listarandom[b])	
-						novo_monstro.posicao(j, i)
-						grupo_monstro.add(novo_monstro)
-
-				level = 1
-
 			jogoinicial = 1 
 
 
@@ -757,17 +647,27 @@ while True:
 			for evento in pygame.event.get():
 				if evento.type == pygame.QUIT:
 					sys.exit()
-				elif evento.type == MOUSEBUTTONDOWN and indice == 0:
+				elif evento.type == MOUSEBUTTONDOWN:
 					tiro = shots(tela, "shot.png","shotG.png",1,q)
 					tiro.posicao(x+ nave1.width/2,nave1.height)
 					grupo_tiros.add(tiro)
-					shoot_sound.play()
-				elif evento.type == MOUSEBUTTONDOWN and indice == 1:
-					tiro = shots(tela, "shot.png","shotG.png",1,q)
-					tiro.posicao(x+ nave1.width/2,nave1.height)
-					grupo_tiros.add(tiro)
-					shoot_sound.stop()
 
+					button_sound_clicked = buttonback (listasom[indice], 250, 7, 50, 25, yellow, blue)
+					if button_sound_clicked:
+						if indice == 0:
+							shoot_sound.stop()
+							button_sound_clicked = buttonback (listasom[indice], 250, 7, 50, 25, yellow, blue)
+							if indice == 0:
+								indice += 1
+							else:
+								indice = 1
+						elif indice == 1:
+							shoot_sound.play()
+							button_sound_clicked = buttonback (listasom[indice], 250, 7, 50, 25, yellow, blue)
+							if indice == 1:
+								indice -= 1
+							else:
+								indice = 0
 
 
 			rel_z = z % background.get_rect().height
@@ -779,7 +679,6 @@ while True:
 			button_exitgame_clicked = buttonback("Menu",190,7,50,25,red,blue)
 			if button_exitgame_clicked:
 				tela_atual = "intro"
-				mus_game.stop()
 
 			button_sound_clicked = buttonback (listasom[indice], 250, 7, 50, 25, yellow, blue)
 			if button_sound_clicked:
@@ -798,6 +697,10 @@ while True:
 					else:
 						indice = 0
 
+				
+
+			# button_som_clicked = sound(0,mus_game)
+
 			posicoesmx = []
 			posicoesmy = []
 
@@ -810,38 +713,30 @@ while True:
 
 			c_tirom += 1
 			if len(posicoesmx) != 0:
-				if c_tirom >= liberatiro:
+				if c_tirom >= 100:
 					g = random.randint(0,len(posicoesmx)-1)
-					tirom = shots(tela,"lasernave.png","lasernave.png",2,1)
+					tirom = shots(tela,"shot_monstro.png","shot_monstro.png",2,1)
 					tirom.posicao(posicoesmx[g],posicoesmy[g])
 					grupo_tirosm.add(tirom)
 					c_tirom = 0
 
-			c_tironavem += 1
-			if c_tironavem >= liberatirom:
-				if len(grupo_nave_mae) > 0:
-					tironavem = shots(tela,"shot_monstro.png","shot_monstro.png",2,1)
-					tironavem.posicao(nave_mae.rect.x +35,nave_mae.rect.y+80)
-					grupo_tirosnavem.add(tironavem)
-					c_tironavem = 0
-
 			c_boost += 1
 			if len(posicoesmx) != 0:
-				if c_boost >= 500:
+				if c_boost >= 400:
 					a = random.randint(0,len(ajudas)-1)
 					g = random.randint(0,len(posicoesmx)-1)
-					boost = premio(tela,imagemajudas[a],ajudas[a])
+					boost = premio(tela,"rainho.png",ajudas[a]) 
+					print(ajudas[a])
 					boost.posicao(posicoesmx[g],posicoesmy[g])
 					grupo_boost.add(boost)
 					c_boost = 0
 
 			ganhaboost = pygame.sprite.groupcollide(grupo_boost,grupo_nave,True,False)
-			for i in ganhaboost:						
+			for i in ganhaboost:
+				if vida == 4:
+					i.ajuda = "campodeforca"
 				if i.ajuda == "life":
-					if vida == 4:
-						i.ajuda = "campodeforca"
-					if vida < 4:
-						vida += 1
+					vida += 1
 					if vida == 2:
 						grupo_vida.add(desenho_vida1)
 					elif vida == 3:
@@ -862,7 +757,6 @@ while True:
 
 			if protecao == 1:
 				tela.blit(mostracampo,(10,550))
-
 				
 		#---------------------------------#
 
@@ -875,7 +769,6 @@ while True:
 			grupo_tirosm.draw(tela)
 			grupo_vida.draw(tela)
 			grupo_boost.draw(tela)
-			grupo_tirosnavem.draw(tela)
 
 
 			if q == 3 :
@@ -888,14 +781,12 @@ while True:
 				for i in col:
 					pontos += 1
 			if q == 1:
-				colmons = pygame.sprite.groupcollide(grupo_monstro,grupo_tiros,False,False)
+				colmons = pygame.sprite.groupcollide(grupo_monstro,grupo_tiros,False,True)
 			colnavemae = pygame.sprite.groupcollide(grupo_tiros,grupo_nave_mae,True,False)
 			
 			if protecao == 0:
 				colmatajoga = pygame.sprite.groupcollide(grupo_tirosm,grupo_nave,True,False)
-				colnmaejoga = pygame.sprite.groupcollide(grupo_tirosnavem,grupo_nave,True,False)
 				colnavemons = pygame.sprite.groupcollide(grupo_monstro,grupo_nave,False,False)
-
 			elif protecao == 1:
 				C_protecao +=1
 				if C_protecao >= 300:
@@ -916,19 +807,6 @@ while True:
 
 			for i in colmatajoga:
 				vida -= 1
-
-			for i in colnavemons:
-				if contamons == 0:
-					vida -= 1
-					contamons += 1
-				if contamons >= 100:
-					contamons = 0
-			if contamons > 0:
-				contamons += 1
-
-			for i in colnmaejoga:
-				vida -= 1
-
 			if vida == 0:
 				nave1.kill()
 			if vida == 3:
@@ -937,7 +815,17 @@ while True:
 				desenho_vida2.kill()
 			if vida == 1:
 				desenho_vida1.kill()
-			
+
+			for i in colnavemons:
+				vida -= 1
+			if vida == 0:
+				nave1.kill()
+			if vida == 3:
+				desenho_vida3.kill()
+			if vida == 2:
+				desenho_vida2.kill()
+			if vida == 1:
+				desenho_vida1.kill()
 
 
 			for i in colnavemae:
@@ -945,8 +833,8 @@ while True:
 					acertosnavemae += 2
 				if i.qualidade == 1:
 					acertosnavemae += 1	
-			if acertosnavemae >= mortenavemae:
-				nave_mae.image = nave_mae.image3
+			if acertosnavemae >= 10:
+				nave_mae.kill()
 				pontos += 15
 				acertosnavemae = 0
 
@@ -959,7 +847,6 @@ while True:
 				if C_gameover >= 60:
 					level += 1
 					jogoinicial = 0
-					C_gameover = 0
 					
 
 
@@ -967,7 +854,7 @@ while True:
 				tela_atual = "Gameover"
 
 
-
+			#mus_game.play()
 			grupo_tiros.update()
 			grupo_monstro.update()
 			grupo_nave_mae.update()
@@ -975,7 +862,6 @@ while True:
 			grupo_tirosm.update()
 			grupo_nave.update(x)
 			grupo_boost.update()
-			grupo_tirosnavem.update()
 			
 
 	elif tela_atual == "sair":
